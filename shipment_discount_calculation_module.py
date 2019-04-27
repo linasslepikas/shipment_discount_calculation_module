@@ -15,6 +15,50 @@ DATA = {
 }
 
 
+class ShipmentValidator:
+    # def __init__(self, data):
+    #     self.name = data
+    #     self.age = age
+
+    @staticmethod
+    def validate_provider(provider, data):
+        for key, value in data.items():
+            if key == provider:
+                return True
+        return False
+
+    @staticmethod
+    def validate_date(date):
+        try:
+            datetime.datetime.strptime(date, '%Y-%m-%d')
+        except ValueError:
+            return False
+        return True
+
+    @staticmethod
+    def validate_package_size(size, data):
+        for key, value in data.items():
+            for val in value:
+                if size == val:
+                    return True
+        return False
+
+    @classmethod
+    def validate_line_format(cls, line, data):
+        valid = True
+        validated_data = {}
+
+        for item in line:
+            if cls.validate_date(item):
+                validated_data['date'] = True
+            if cls.validate_provider(item, data):
+                validated_data['provider'] = True
+            if cls.validate_package_size(item, data):
+                validated_data['size'] = True
+        if len(validated_data) < 3:
+            valid = False
+        return valid
+
 # 1. validating input format
 def validate_input_format(data):
     extension = data.split(".")[1]
@@ -57,14 +101,9 @@ def order_data_asc(data):
 
 
 def output_data(data):
-    output = []
-    for item in data:
-        output.append(' '.join(item))
-    for out in output:
-        print(out)
+    for out in data:
+        print(' '.join(out))
     return True
-
-
 
 
 data = read_data('input.txt')
@@ -72,15 +111,18 @@ data = read_data('input.txt')
 ordered_data = order_data_asc(data)
 
 
-
-
-
-
-
 def process_input_data(content):
-    output_data = []
+    result = []
     l_discount = {}
     for item in content:
+        item = item.split()
+        if not ShipmentValidator.validate_line_format(item, DATA):
+            item.append('Ignored')
+        if "S" in item:
+            item.append(lowest_price(DATA))
+        result.append(item)
+
+    for item in result:
         if 'L' in item and 'LP'in item:
             month = datetime.datetime.strptime(item[0], '%Y-%m-%d').month
             try:
@@ -92,15 +134,9 @@ def process_input_data(content):
             if len(l_discount[month]) == 3 and not l_discount['discount_{}'.format(month)]:
                 item.append('0.00')
                 l_discount['discount_{}'.format(month)] = True
+        # print(item)
 
-    for item in content:
-        if len(item) < 3:
-            item.append('Ignored')
-        if "S" in item:
-            item.append(lowest_price(DATA))
-        output_data.append(item)
-
-    return output_data
+    return result
 
 
 def lowest_price(provider_pricing, package_size='S'):
@@ -113,35 +149,20 @@ def lowest_price(provider_pricing, package_size='S'):
 
 # processed_data = process_input_data(ordered_data)
 
-output_data(ordered_data)
+# output_data(ordered_data)
 
+linas = process_input_data(ordered_data)
+
+output_data(linas)
 
 def add_smallest_price(*args):
     pass
 
 
-class ShipmentValidator:
 
-    @staticmethod
-    def validate_provider(provider, data):
-        for key, value in data.items():
-            if key == provider:
-                return True
-        return False
-
-    @staticmethod
-    def validate_date(date):
-        try:
-            datetime.datetime.strptime(date, '%Y-%m-%d')
-        except ValueError:
-            print('Incorrect data format, should be YYYY-MM-DD')
-            return False
-        return True
-
-    @staticmethod
-    def validate_package_size(data):
-        return False
 
 
 # print(ShipmentValidator.validate_provider('MR', DATA))
 # process_input_data()
+
+# veikia = ShipmentValidator.validate_line_format('2015-02-01 S MR', DATA)
