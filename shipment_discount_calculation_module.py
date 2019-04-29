@@ -84,7 +84,21 @@ def order_data_asc(data):
         dates.append(row[0])
 
     # Order dates in ASC order
+    bad_dates = {}
+    for date in dates:
+        if not ShipmentValidator.validate_date(date):
+            index = dates.index(date)
+            dates.remove(date)
+            bad_dates[index] = date
+
     dates_in_asc_order = sorted(dates, key=lambda x: datetime.datetime.strptime(x, '%Y-%m-%d'))
+
+    if len(bad_dates) > 0:
+        for key, value in bad_dates.items():
+            print(key)
+            print(value)
+            dates_in_asc_order.insert(key, value)
+
     output = []
     # Looping via dates
     for date in dates_in_asc_order:
