@@ -95,8 +95,6 @@ def order_data_asc(data):
 
     if len(bad_dates) > 0:
         for key, value in bad_dates.items():
-            print(key)
-            print(value)
             dates_in_asc_order.insert(key, value)
 
     output = []
