@@ -99,7 +99,7 @@ class ShipmentProcessor:
                 elif not accumulation_applied:
                     actual_price = float(ShipmentHelper.get_price(provider, size, data))
                     item[3] = ("%.2f" % (actual_price - discount_left))
-                    left = "%.2f" % discount_left if discount_left < 0 else '-'
+                    left = '-' if discount_left <= 0 else "%.2f" % discount_left
                     item.append(left)
                     accumulation = False
             result.append(item)
