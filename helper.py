@@ -24,7 +24,7 @@ class ShipmentHelper:
         :param data:
         :return: string:
         """
-        return data[provider][size]
+        return float(data[provider][size])
 
     @staticmethod
     def read_file(file_path):

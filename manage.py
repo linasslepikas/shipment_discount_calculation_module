@@ -33,8 +33,9 @@ except IndexError:
 
 ShipmentValidator.validate_input_format(INPUT_FILE_PATH, ALLOWED_FORMATS)
 
-ShipmentProcessor.output_data(
-    ShipmentProcessor.process_data(
-        ShipmentProcessor.order_data_asc(
-            ShipmentHelper.read_file(
-                INPUT_FILE_PATH)), DATA, SMALL, LARGE, IGNORE_INVALID, FREE_PROVIDER, FREE_SHIPMENT, DISCOUNT_LIMIT))
+processor = ShipmentProcessor(DATA, INPUT_FILE_PATH)
+
+processor.output_data(
+    processor.process_data(
+        processor.order_data_asc(),
+        DATA, SMALL, LARGE, IGNORE_INVALID, FREE_PROVIDER, FREE_SHIPMENT, DISCOUNT_LIMIT))

@@ -4,17 +4,19 @@ from helper import ShipmentHelper
 from validator import ShipmentValidator
 
 
-class ShipmentProcessor:
+class ShipmentProcessor(ShipmentHelper):
 
-    @staticmethod
-    def order_data_asc(data):
+    def __init__(self, data, path):
+        self.data = data
+        self.content = ShipmentHelper.read_file(path)
+
+    def order_data_asc(self):
         """
         Order data by date in descending order
-        :param data:
         :return: list:
         """
         dates = []
-        for item in data:
+        for item in self.content:
             row = item.split()
             dates.append(row[0])
 
@@ -37,12 +39,12 @@ class ShipmentProcessor:
         result = []
         # Mapping data back to the dates.
         for date in dates_in_asc_order:
-            for key in data:
+            for key in self.content:
                 if date in key.split():
                     # If that date is in the data, we add that data to result
                     result.append(key)
                     # We found data map. Remove this information from data set to avoid duplication and break this loop.
-                    data.remove(key)
+                    self.content.remove(key)
                     break
         return result
 
@@ -53,7 +55,12 @@ class ShipmentProcessor:
         :return: bool:
         """
         for out in data:
-            print(' '.join(out))
+            output = []
+            for item in out:
+                if not isinstance(item, str):
+                    item = "%.2f" % item
+                output.append(item)
+            print(' '.join(output))
         return True
 
     @staticmethod
@@ -77,7 +84,7 @@ class ShipmentProcessor:
                 provider = item[2]
                 price = float(item[3])
 
-                original_price = float(ShipmentHelper.get_price(provider, size, data))
+                original_price = ShipmentHelper.get_price(provider, size, data)
                 if price < original_price:
                     reduction = (original_price - price)
                     if month in accumulated_discounts:
@@ -97,7 +104,7 @@ class ShipmentProcessor:
                     discount = '-' if difference <= 0 else "%.2f" % difference
                     item.append(discount)
                 elif not accumulation_applied:
-                    actual_price = float(ShipmentHelper.get_price(provider, size, data))
+                    actual_price = ShipmentHelper.get_price(provider, size, data)
                     item[3] = ("%.2f" % (actual_price - discount_left))
                     left = '-' if discount_left <= 0 else "%.2f" % discount_left
                     item.append(left)
