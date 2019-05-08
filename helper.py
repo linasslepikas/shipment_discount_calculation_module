@@ -1,15 +1,17 @@
 class ShipmentHelper:
 
     @staticmethod
-    def get_lowest_price(provider_pricing):
-        """ Gets smallest price from price list.
+    def get_lowest_price(provider_pricing, package_size='S'):
+        """ Gets smallest price from price list according to package size.
         :param provider_pricing:
+        :param package_size:
         :return: string:
         """
         prices = []
         for key, value in provider_pricing.items():
             for size, price in value.items():
-                prices.append(price)
+                if size == package_size:
+                    prices.append(price)
         prices.sort()
         return prices[:1][0]
 
